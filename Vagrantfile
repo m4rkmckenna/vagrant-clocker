@@ -73,7 +73,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   #Create SLAVES
   (1..clockerConfig['slave']['count']).each do |i|
-    config.vm.define vm_name = "%s-%02d" % [clockerConfig['slave']['prefix'], i] do |slave_node_config|
+    config.vm.define vm_name = clockerConfig['slave']['hostname_template'] % [i] do |slave_node_config|
       slave_node_config.vm.hostname = vm_name
       #Set BOX
       if clockerConfig['slave'].has_key?('box') then
@@ -81,7 +81,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       else
          master_node_config.vm.box = DEFAULT_BOX
       end
-      slave_node_config.vm.network "private_network", ip: "10.10.100.%03d" % [i]
+      slave_node_config.vm.network "private_network", ip: clockerConfig['slave']['ip_template'] % [i]
       #Custom SHELL Provisioning
       if clockerConfig['slave'].has_key?("shell")
         clockerConfig['slave']["shell"].each do |cmd|
