@@ -14,13 +14,12 @@ master:
     - ln -s /vagrant/files/.brooklyn ~/.brooklyn
     - sudo ln -s /vagrant/files/clocker-install.service /etc/systemd/system/clocker-install.service
     - sudo ln -s /vagrant/files/clocker.service /etc/systemd/system/clocker.service;
-    - sudo systemctl start clocker-install
-    - sudo systemctl start clocker
+    - sudo systemctl start clocker-install clocker &
 slave:
   box: ubuntu/vivid64
   count: 3
-  hostname_template: byon%d
-  ip_template: 10.10.100.%d
+  hostname_template: byon%s
+  ip_template: 10.10.100.%s
   ram: 512
   cpus: 1
   shell:

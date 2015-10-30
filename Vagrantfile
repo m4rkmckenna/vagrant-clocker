@@ -118,7 +118,12 @@ def update_brooklyn_locations(hostname_template, ip_template, node_count)
     end
   end
   File.open("files/.brooklyn/brooklyn.properties", "w") do |file|
+    cluster_name = hostname_template % ["-Cluster"]
     file.puts saved_lines
+    file.puts "brooklyn.location.named.%s=byon:(hosts=\"%s\")" % [cluster_name , ip_template % ["1-%d" % node_count]]
+    file.puts "brooklyn.location.named.%s.user=vagrant" % [cluster_name]
+    file.puts "brooklyn.location.named.%s.user=vagrant" % [cluster_name]
+    
     (1..node_count).each do |i|
       host = hostname_template % [i]
       ip = ip_template % [i]
