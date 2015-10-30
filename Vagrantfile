@@ -6,13 +6,13 @@ VAGRANTFILE_API_VERSION = 2
 DEFAULT_BOX = "base"
 DEFAULT_RAM = 256
 DEFAULT_CPUS = 1
-
+COREOS_STABLE = "http://stable.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json"
 require 'yaml'
 
 clockerConfig = YAML.load_file('clockerConfig.yaml')
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  update_brooklyn_locations(clockerConfig['slave']['hostname_template'],clockerConfig['slave']['ip_template'],clockerConfig['slave']['count'])  
+  update_brooklyn_locations(clockerConfig['master']['node'], clockerConfig['slave']['hostname_template'],clockerConfig['slave']['ip_template'],clockerConfig['slave']['count'])  
   clockerConfig['master']['node'].each do |master_node|
     
     #Create MASTERs
@@ -80,7 +80,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       if clockerConfig['slave'].has_key?('box') then
         slave_node_config.vm.box = clockerConfig['slave']['box']
       else
-         master_node_config.vm.box = DEFAULT_BOX
+         slave_node_config.vm.box = DEFAULT_BOX
       end
       slave_node_config.vm.network "private_network", ip: clockerConfig['slave']['ip_template'] % [i]
       #Custom SHELL Provisioning
@@ -111,7 +111,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 end
 
-def update_brooklyn_locations(hostname_template, ip_template, node_count)
+def update_brooklyn_locations(masters, slave_hostname_template, slave_ip_template, slave_node_count)
   saved_lines = Array.new
   File.readlines('files/.brooklyn/brooklyn.properties').each do |line|
     if !line.start_with?('brooklyn.location') then
@@ -119,18 +119,23 @@ def update_brooklyn_locations(hostname_template, ip_template, node_count)
     end
   end
   File.open("files/.brooklyn/brooklyn.properties", "w") do |file|
-    cluster_name = hostname_template % ["-Cluster"]
     file.puts saved_lines
-    file.puts "brooklyn.location.named.%s=byon:(hosts=\"%s\")" % [cluster_name , ip_template % ["1-%d" % node_count]]
+    #Add Masters
+    masters.each do |master|
+      file.puts "brooklyn.location.named.%s=byon:(hosts=\"%s\")" % [master['name'], master['ip']]
+      file.puts "brooklyn.location.named.%s.user=vagrant" % [master['name']]
+      file.puts "brooklyn.location.named.%s.password=vagrant" % [master['name']]
+    end
+    #Add Slaves
+    cluster_name = slave_hostname_template % ["-Cluster"]
+    file.puts "brooklyn.location.named.%s=byon:(hosts=\"%s\")" % [cluster_name , slave_ip_template % ["{1-%d}" % slave_node_count]]
     file.puts "brooklyn.location.named.%s.user=vagrant" % [cluster_name]
-    file.puts "brooklyn.location.named.%s.user=vagrant" % [cluster_name]
-    
-    (1..node_count).each do |i|
-      host = hostname_template % [i]
-      ip = ip_template % [i]
-      file.puts "brooklyn.location.named.%s=byon:(hosts=\"%s\")" % [host,ip]
+    file.puts "brooklyn.location.named.%s.password=vagrant" % [cluster_name]
+    (1..slave_node_count).each do |i|
+      host = slave_hostname_template % [i]
+      file.puts "brooklyn.location.named.%s=byon:(hosts=\"%s\")" % [host, slave_ip_template % [i]]
       file.puts "brooklyn.location.named.%s.user=vagrant" % [host]
-      file.puts "brooklyn.location.named.%s.user=vagrant" % [host]
+      file.puts "brooklyn.location.named.%s.password=vagrant" % [host]
     end
   end
 end

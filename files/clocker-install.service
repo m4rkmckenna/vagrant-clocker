@@ -1,13 +1,17 @@
 [Unit]
 Description=Install Clocker
-Before=clocker.service
 
 [Service]
-Type=oneshot
 ExecStartPre=/bin/rm -rf /home/vagrant/clocker
 ExecStartPre=/bin/mkdir -p /home/vagrant/clocker
 ExecStartPre=/usr/bin/wget --no-check-certificate -O /home/vagrant/clocker/brooklyn-clocker-dist.tar.gz http://git.io/vCrU7
-ExecStart=/bin/tar zxf /home/vagrant/clocker/brooklyn-clocker-dist.tar.gz --directory /home/vagrant/clocker/
+ExecStartPre=/bin/tar zxf /home/vagrant/clocker/brooklyn-clocker-dist.tar.gz --directory /home/vagrant/clocker/
+ExecStartPre=/bin/rm -rf /home/vagrant/.brooklyn
+ExecStartPre=/bin/cp -R /vagrant/files/.brooklyn /home/vagrant
+ExecStart=/home/vagrant/clocker/brooklyn-clocker/bin/clocker.sh
+User=vagrant
+Group=vagrant
+
 User=vagrant
 Group=vagrant
 

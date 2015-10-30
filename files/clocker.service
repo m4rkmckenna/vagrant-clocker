@@ -1,12 +1,14 @@
 [Unit]
-Description=Clocker Service
-After=clocker-install.service
+Description=Clocker Service (containerized)
+After=docker.service
+Requires=docker.service
       
 [Service]
 TimeoutStartSec=0
-ExecStart=/home/vagrant/clocker/brooklyn-clocker/bin/clocker.sh
-User=vagrant
-Group=vagrant
+ExecStartPre=-/usr/bin/docker kill clocker-systemd
+ExecStartPre=-/usr/bin/docker rm clocker-systemd
+ExecStartPre=/usr/bin/docker pull clockercentral/clocker
+ExecStart=/usr/bin/docker run --name clocker-systemd -v /vagrant/files/.brooklyn:/root/.brooklyn -v ~/.ssh:/root/.ssh -P clockercentral/clocker %H calico
 
 [Install]
 WantedBy=multi-user.target
