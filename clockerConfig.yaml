@@ -11,7 +11,7 @@ master:
         host: 8081
     shell:
     - export DEBIAN_FRONTEND=noninteractive; sudo apt-get install --yes openjdk-8-jre-headless
-    - ln -s /vagrant/files/.brooklyn ~/.brooklyn
+    - sudo ln -s /vagrant/files/.brooklyn /root/.brooklyn
     - sudo ln -s /vagrant/files/clocker-install.service /etc/systemd/system/clocker-install.service
     - sudo ln -s /vagrant/files/clocker.service /etc/systemd/system/clocker.service;
     - sudo systemctl start clocker-install clocker &

@@ -4,7 +4,9 @@ After=clocker-install.service
       
 [Service]
 TimeoutStartSec=0
-ExecStart=/opt/clocker/brooklyn-clocker/bin/clocker.sh
+ExecStart=/home/vagrant/clocker/brooklyn-clocker/bin/clocker.sh
+User=vagrant
+Group=vagrant
 
 [Install]
 WantedBy=multi-user.target

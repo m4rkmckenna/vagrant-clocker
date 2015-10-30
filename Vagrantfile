@@ -66,6 +66,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         else
           vb.cpus = DEFAULT_CPUS
         end
+        master_node_config.vm.post_up_message = "Node [%s] has been started but may still be installing software" %  master_node['name']
       end
       
     end
