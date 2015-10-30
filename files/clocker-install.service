@@ -1,0 +1,13 @@
+[Unit]
+Description=Install Clocker
+Before=clocker.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/rm -rf /opt/clocker
+ExecStartPre=/bin/mkdir -p /opt/clocker
+ExecStartPre=/usr/bin/wget --no-check-certificate -O /opt/clocker/brooklyn-clocker-dist.tar.gz http://git.io/vCrU7
+ExecStart=/bin/tar zxf /opt/clocker/brooklyn-clocker-dist.tar.gz --directory /opt/clocker/
+
+[Install]
+WantedBy=multi-user.target

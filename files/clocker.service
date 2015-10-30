@@ -1,12 +1,9 @@
 [Unit]
 Description=Clocker Service
+After=clocker-install.service
       
 [Service]
 TimeoutStartSec=0
-ExecStartPre=/bin/rm -rf /opt/clocker
-ExecStartPre=/bin/mkdir -p /opt/clocker
-ExecStartPre=/usr/bin/wget --no-check-certificate -O /opt/clocker/brooklyn-clocker-dist.tar.gz http://git.io/vCrU7
-ExecStartPre=/bin/tar zxf /opt/clocker/brooklyn-clocker-dist.tar.gz --directory /opt/clocker/
 ExecStart=/opt/clocker/brooklyn-clocker/bin/clocker.sh
 
 [Install]

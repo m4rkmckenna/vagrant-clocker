@@ -12,7 +12,7 @@ require 'yaml'
 clockerConfig = YAML.load_file('clockerConfig.yaml')
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  
+  update_brooklyn_locations(clockerConfig['slave']['hostname_template'],clockerConfig['slave']['ip_template'],clockerConfig['slave']['count'])  
   clockerConfig['master']['node'].each do |master_node|
     
     #Create MASTERs
@@ -107,5 +107,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
       end
     end 
+  end
+end
+
+def update_brooklyn_locations(hostname_template, ip_template, node_count)
+  saved_lines = Array.new
+  File.readlines('files/.brooklyn/brooklyn.properties').each do |line|
+    if !line.start_with?('brooklyn.location') then
+      saved_lines.push(line)
+    end
+  end
+  File.open("files/.brooklyn/brooklyn.properties", "w") do |file|
+    file.puts saved_lines
+    (1..node_count).each do |i|
+      host = hostname_template % [i]
+      ip = ip_template % [i]
+      file.puts "brooklyn.location.named.%s=byon:(hosts=\"%s\")" % [host,ip]
+      file.puts "brooklyn.location.named.%s.user=vagrant" % [host]
+      file.puts "brooklyn.location.named.%s.user=vagrant" % [host]
+    end
   end
 end

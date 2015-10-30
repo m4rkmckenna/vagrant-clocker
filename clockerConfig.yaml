@@ -7,20 +7,20 @@ master:
   - name: clocker
     ip: 10.10.10.101
     forwarded_ports:
-      - guest: 8080
-        host: 8080
+      - guest: 8081
+        host: 8081
     shell:
     - export DEBIAN_FRONTEND=noninteractive; sudo apt-get install --yes openjdk-8-jre-headless
     - ln -s /vagrant/files/.brooklyn ~/.brooklyn
-    - sudo ln -s /vagrant/files/clocker.service /etc/systemd/system/clocker.service
+    - sudo ln -s /vagrant/files/clocker.service /etc/systemd/system/clocker-install.service; sudo ln -s /vagrant/files/clocker.service /etc/systemd/system/clocker.service;
     - sudo systemctl start clocker
 slave:
   box: ubuntu/vivid64
-  count: 2
-  hostname_template: byon-%d
+  count: 3
+  hostname_template: byon%d
   ip_template: 10.10.100.%d
   ram: 512
   cpus: 1
   shell:
-  - touch ~/init.log
+  - date > init.log
 ...
