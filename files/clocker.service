@@ -9,7 +9,7 @@ ExecStartPre=-/usr/bin/docker kill clocker-systemd
 ExecStartPre=-/usr/bin/docker rm clocker-systemd
 ExecStartPre=/usr/bin/docker pull clockercentral/clocker
 ExecStartPre=/bin/chmod -R 700 /vagrant/files/.brooklyn 
-ExecStart=/usr/bin/docker run -p 80:8081 --name clocker-systemd -v /vagrant/files/.brooklyn:/root/.brooklyn -v ~/.ssh:/root/.ssh clockercentral/clocker
+ExecStart=/usr/bin/docker run -p 80:8081 --name clocker-systemd -v /vagrant/files/.brooklyn:/root/.brooklyn -v /home/vagrant/.ssh:/root/.ssh clockercentral/clocker
 
 [Install]
 WantedBy=multi-user.target
