@@ -1,0 +1,15 @@
+[Unit]
+Description=Brooklyn Service (containerized)
+After=docker.service
+Requires=docker.service
+      
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill brooklyn-systemd
+ExecStartPre=-/usr/bin/docker rm brooklyn-systemd
+ExecStartPre=/usr/bin/docker pull andreaturli/incubator-brooklyn
+ExecStartPre=/bin/chmod -R 700 /vagrant/files/.brooklyn 
+ExecStart=/usr/bin/docker run -p 80:8081 --name brooklyn-systemd -v /vagrant/files/.brooklyn:/root/.brooklyn -v /home/vagrant/.ssh:/root/.ssh andreaturli/incubator-brooklyn
+
+[Install]
+WantedBy=multi-user.target
