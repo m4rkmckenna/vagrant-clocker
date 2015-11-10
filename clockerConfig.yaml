@@ -15,6 +15,16 @@ master:
     - sudo ln -s /vagrant/files/clocker-install.service /etc/systemd/system/clocker-install.service
     - sudo ln -s /vagrant/files/clocker.service /etc/systemd/system/clocker.service;
     - sudo systemctl start clocker &
+  # - name: brooklyn
+  #   ip: 10.10.10.101
+  #   forwarded_ports:
+  #     - guest: 80
+  #       host: 8081
+  #   shell:
+  #   - export DEBIAN_FRONTEND=noninteractive;sudo apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D;sudo add-apt-repository "deb https://apt.dockerproject.org/repo ubuntu-vivid main";sudo apt-get update;
+  #   - sudo apt-get install --yes openjdk-8-jre-headless docker-engine
+  #   - sudo ln -s /vagrant/files/brooklyn.service /etc/systemd/system/brooklyn.service;
+  #   - sudo systemctl start brooklyn &
 slave:
   box: ubuntu/vivid64
   count: 3
