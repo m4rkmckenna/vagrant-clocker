@@ -7,9 +7,9 @@ Requires=docker.service
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill brooklyn-systemd
 ExecStartPre=-/usr/bin/docker rm brooklyn-systemd
-ExecStartPre=/usr/bin/docker pull andreaturli/incubator-brooklyn
+ExecStartPre=/usr/bin/docker pull m4rkmckenna/brooklyn-docker
 ExecStartPre=/bin/chmod -R 700 /vagrant/files/.brooklyn 
-ExecStart=/usr/bin/docker run -p 80:8081 --name brooklyn-systemd -v /vagrant/files/.brooklyn:/root/.brooklyn -v /home/vagrant/.ssh:/root/.ssh andreaturli/incubator-brooklyn
+ExecStart=/usr/bin/docker run -p 80:8081 --name brooklyn-systemd -v /vagrant/files/.brooklyn:/root/.brooklyn -v /home/vagrant/.ssh:/root/.ssh m4rkmckenna/brooklyn-docker
 
 [Install]
 WantedBy=multi-user.target
